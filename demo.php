@@ -27,7 +27,7 @@ $chimoso->ident("Chimoso", "Chimoso", "Chimoso");
 /* 376: MOTD done
  * runOnce: Drop handler after it's run
  */
-$chimoso->registerMessage("376", function($event) use ($chimoso) {
+$chimoso->registerMessage("376", function($event) {
 	$chimoso->join("#test");
 }, Array('runOnce' => 1));
 
