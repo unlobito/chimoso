@@ -1,0 +1,21 @@
+{
+	"name": "henriwatson/chimoso",
+	"require": {
+		"php": ">= 5.3",
+		"phergie/phergie-irc-parser": "1.0.0"
+	},
+	"description": "PHP IRC bot framework",
+	"homepage": "https://github.com/henriwatson/chimoso",
+	"license": "MIT",
+	"authors": [
+	        {
+	            "name": "Henri Watson",
+	            "email": "henri@henriwatson.com"
+	        }
+	],
+    "autoload": {
+        "psr-0": {
+            "henriwatson": "src"
+        }
+    }
+}
