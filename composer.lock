@@ -1,26 +1,25 @@
 {
-    "hash": "3a22064ced717a41722fef7fa7d3a1d7",
+    "hash": "9e22b95f17fb186475cc937cc85fdcfb",
     "packages": [
         {
             "name": "phergie/phergie-irc-parser",
-            "version": "1.0.0",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phergie/phergie-irc-parser",
-                "reference": "1.0.0"
+                "reference": "a8a145b1fc2bf512d4f54cba9ee09325e283c649"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/phergie/phergie-irc-parser/archive/1.0.0.zip",
-                "reference": "1.0.0",
+                "url": "https://api.github.com/repos/phergie/phergie-irc-parser/zipball/a8a145b1fc2bf512d4f54cba9ee09325e283c649",
+                "reference": "a8a145b1fc2bf512d4f54cba9ee09325e283c649",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3"
             },
-            "time": "2012-10-20 09:18:27",
+            "time": "2013-02-06 01:54:18",
             "type": "library",
-            "installation-source": "dist",
             "autoload": {
                 "psr-0": {
                     "Phergie": "src"
@@ -32,8 +31,8 @@
             ],
             "description": "Parser for messages conforming to the IRC protocol",
             "keywords": [
-                "parser",
-                "irc"
+                "irc",
+                "parser"
             ]
         }
     ],
@@ -41,8 +40,8 @@
     "aliases": [
 
     ],
-    "minimum-stability": "dev",
-    "stability-flags": [
-
-    ]
+    "minimum-stability": "stable",
+    "stability-flags": {
+        "phergie/phergie-irc-parser": 20
+    }
 }
