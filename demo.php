@@ -7,13 +7,17 @@ ini_set('memory_limit', '128M');
 ini_set('log_errors',false);
 ini_set('display_errors', 'on');
 
-/* Composer initialiser */
+require_once 'src/henriwatson/Chimoso/Core.php';
+require_once 'src/henriwatson/Chimoso/Event.php';
+
 require_once 'vendor/autoload.php';
 
 use henriwatson\Chimoso as Chimoso;
 
 /* Server connection */
 $chimoso = new Chimoso\Core("irc", 6667);
+
+$chimoso->debug(true); // Output outgoing/incoming messages.
 
 try {
 	$chimoso->connect();
@@ -27,7 +31,7 @@ $chimoso->ident("Chimoso", "Chimoso", "Chimoso");
 /* 376: MOTD done
  * runOnce: Drop handler after it's run
  */
-$chimoso->registerMessage("376", function($event) {
+$chimoso->registerMessage("376", function($event) use ($chimoso) {
 	$chimoso->join("#test");
 }, Array('runOnce' => 1));
 
