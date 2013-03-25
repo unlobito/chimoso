@@ -38,6 +38,7 @@ class Core {
 	private $timeout;
 	private $handlersMessage = Array();
 	private $handlersCommand = Array();
+	private $debug = false;
 	
 	/** Create a Chimoso object
 	 * @param string IRC server hostname
@@ -49,13 +50,22 @@ class Core {
 		$this->port = $port;
 		$this->timeout = $timeout;
 	}
+
+	/** Set debug mode
+	 * @param bool enable debug mode
+	*/
+	public function debug($enable) {
+		$this->debug = (bool) $enable;
+	}
 	
 	/** Send raw data to the server
 	 * @param string data to send
 	*/
 	public function put($data) {
 		fputs($this->socket, $data."\n");
-		echo "-> ".$data."\n";
+		
+		if ($this->debug)
+			echo "-> ".$data."\n";
 	}
 	
 	/** Connect to specified server */
@@ -123,7 +133,8 @@ class Core {
 					break;
 			}
 			
-			echo "<- ".$data;
+			if ($this->debug)
+				echo "<- ".$data;
 			
 			$bits = explode(" ", $data);
 			
