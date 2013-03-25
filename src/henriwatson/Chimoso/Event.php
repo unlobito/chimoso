@@ -72,14 +72,23 @@ class Event {
 	*/
 	public function reply($msg) {
 		if ($this->parse['command'] == "PRIVMSG") {
+			/* Check if this is a private message or a channel and set the
+			* destination accordingly */
+			if (substr($this->parse['params']['receivers'], 0, 1) == "#") {
+				$destination = $this->parse['params']['receivers'];
+			} else {
+				$destination = $this->parse['nick'];
+			}
+
+			/* Split message up into 400 character chunks */
 			if (strlen($msg) > 400) {
 				$chunks = explode("\r\n", chunk_split($msg, 400, "\r\n"));
 				unset($chunks[count($chunks)-1]);
 				foreach ($chunks as $chunk) {
-					$this->put("PRIVMSG ".$this->parse['params']['receivers']." :".$chunk);
+					$this->put("PRIVMSG ".$destination." :".$chunk);
 				}
 			} else {
-				$this->put("PRIVMSG ".$this->parse['params']['receivers']." :".$msg);
+				$this->put("PRIVMSG ".$destination." :".$msg);
 			}
 		} else {
 			$this->put($msg);
