@@ -135,7 +135,7 @@ class Core {
 			/* General IRC message handling */
 			if (isset($this->handlersMessage[strtoupper($command)])) {
 				foreach ($this->handlersMessage[strtoupper($command)] as $id => $handler) {
-					$handler['function'](new Event($data, &$socket, &$this));
+					$handler['function'](new Event($data, $socket, $this));
 					
 					if (isset($handler['runOnce']) && $handler['runOnce'])
 						unset($this->handlersMessage[$command][$id]);
@@ -151,7 +151,7 @@ class Core {
 				
 				if (isset($this->handlersCommand[strtolower($bits[0])])) {
 					foreach ($this->handlersCommand[strtolower($bits[0])] as $id => $handler) {
-						$handler['function'](new Event($data, &$socket, &$this, Array('rmFirstWord' => 1)));
+						$handler['function'](new Event($data, $socket, $this, Array('rmFirstWord' => 1)));
 						
 						if (isset($handler['runOnce']) && $handler['runOnce'])
 							unset($this->handlersCommand[$bits[0]][$id]);
