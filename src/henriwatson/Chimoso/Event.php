@@ -51,7 +51,7 @@ class Event {
 		if (isset($additional['rmFirstWord'])) {
 			$this->body = $this->parse['params']['text'];
 			$firstWord = explode(" ", $this->body, 2);
-			$this->body = substr($this->body, strlen($firstWord[0]));
+			$this->body = substr($this->body, strlen($firstWord[0])+1);
 		} else if (isset($this->parse['params']['text'])) {
 			$this->body = $this->parse['params']['text'];
 		}
