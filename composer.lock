@@ -1,24 +1,23 @@
 {
-    "hash": "9e22b95f17fb186475cc937cc85fdcfb",
+    "hash": "96af1a6779290301d083b8319f76bfcb",
     "packages": [
         {
             "name": "phergie/phergie-irc-parser",
-            "version": "dev-master",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/phergie/phergie-irc-parser",
-                "reference": "a8a145b1fc2bf512d4f54cba9ee09325e283c649"
+                "url": "https://github.com/phergie/phergie-irc-parser.git",
+                "reference": "1.1.0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phergie/phergie-irc-parser/zipball/a8a145b1fc2bf512d4f54cba9ee09325e283c649",
-                "reference": "a8a145b1fc2bf512d4f54cba9ee09325e283c649",
+                "url": "https://api.github.com/repos/phergie/phergie-irc-parser/zipball/1.1.0",
+                "reference": "1.1.0",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3"
             },
-            "time": "2013-02-06 01:54:18",
             "type": "library",
             "autoload": {
                 "psr-0": {
@@ -33,15 +32,24 @@
             "keywords": [
                 "irc",
                 "parser"
-            ]
+            ],
+            "time": "2013-03-05 02:27:51"
         }
     ],
-    "packages-dev": null,
+    "packages-dev": [
+
+    ],
     "aliases": [
 
     ],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "phergie/phergie-irc-parser": 20
-    }
+    "stability-flags": [
+
+    ],
+    "platform": {
+        "php": ">= 5.3"
+    },
+    "platform-dev": [
+
+    ]
 }
