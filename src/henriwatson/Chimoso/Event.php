@@ -37,11 +37,15 @@ class Event {
 	/** Parsed message data from Phergie */
 	public $parse;
 	
+	/** Additional metadata passed in by the runner */
+	public $additional;
+	
 	private $chimoso;
 	private $socket;
 	
 	function __construct($data, &$socket, $chimoso, $additional = Array()) {
 		$this->data = $data;
+		$this->additional = $additional;
 		$this->socket = &$socket;
 		$this->chimoso = &$chimoso;
 		

@@ -42,5 +42,29 @@ $chimoso->registerCommand("!echo", function($event) {
 	$event->reply($event->body);
 });
 
+/* Listen for URIs with a chimoso scheme
+ * and echo the URI and the host component
+ * Example: chimoso://test
+ */
+$chimoso->registerURI("scheme", "chimoso", function($event) {
+	$event->reply("scheme: ".$event->additional['uri'].": ".$event->additional['components']['host']);
+});
+
+/* Listen for URIs with a chimoso hostname
+ * and echo the URI
+ * Example: http://chimoso/blah
+ */
+$chimoso->registerURI("hostname", "chimoso", function($event) {
+	$event->reply("hostname: ".$event->additional['uri']);
+});
+
+/* Listen for URIs that look like a tweet
+ * and echo the URI
+ * Example: https://twitter.com/moonpolysoft/status/456079501315674112
+ */
+$chimoso->registerURI("regex", "/^http(s)?:\/\/twitter\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)$/", function($event) {
+	$event->reply("tweet:". $event->additional['uri']);
+});
+
 /* Start listening for messages */
 $chimoso->run(); 

@@ -38,6 +38,7 @@ class Core {
 	private $timeout;
 	private $handlersMessage = Array();
 	private $handlersCommand = Array();
+	private $handlersURI = Array();
 	private $debug = false;
 	
 	/** Create a Chimoso object
@@ -117,6 +118,26 @@ class Core {
 		));
 	}
 	
+	/** Register a URI to listen for
+	 * @param string match type (scheme, hostname, regex)
+	 * @param string search string
+	 * @param closure callback function. an Event object will be passed back as the only parameter.
+	*/
+	public function registerURI($type, $search, $function) {
+		if ($type == 'scheme' || $type == 'hostname') {
+			$this->handlersURI[$type][$search][] = Array(
+				'function' => &$function
+			);
+		} elseif ($type == 'regex') {
+			$this->handlersURI[$type][] = Array(
+				'regex' => $search,
+				'function' => &$function
+			);
+		} else {
+			return false;
+		}
+	}
+	
 	/** Start listening for messages */
 	public function run() {
 		$this->registerMessage("PING", function($event) {
@@ -158,6 +179,44 @@ class Core {
 				$parser = new \Phergie\Irc\Parser();
 				$parse = $parser->parse($data);
 				
+				/* URI handling */
+				preg_match_all('#\b(\w+):\/?\/?([^\s()<>]+)(?:\([\w\d]+\)|([^[:punct:]\s]|/))#', $parse['params']['text'], $URImatches, PREG_SET_ORDER);
+				
+				foreach ($URImatches as $match) {
+					$matchParse = parse_url($match[0]); // URI parsing is hard. Let PHP do it.
+					
+					/* protocol matching */
+					if (isset($this->handlersURI['scheme'][$matchParse['scheme']])) {
+						foreach($this->handlersURI['scheme'][$matchParse['scheme']] as $id => $handler) {
+							$handler['function'](new Event($data, $socket, $this, Array('rmFirstWord' => 1, 'uri' => $match[0], 'components' => $matchParse)));
+							
+							if (isset($handler['runOnce']) && $handler['runOnce'])
+								unset($this->handlersURI['scheme'][$matchParse['scheme']][$id]);
+						}
+					}
+					
+					/* hostname matching */
+					if (isset($this->handlersURI['hostname'][$matchParse['host']])) {
+						foreach($this->handlersURI['hostname'][$matchParse['host']] as $id => $handler) {
+							$handler['function'](new Event($data, $socket, $this, Array('rmFirstWord' => 1, 'uri' => $match[0], 'components' => $matchParse)));
+							
+							if (isset($handler['runOnce']) && $handler['runOnce'])
+								unset($this->handlersURI['hostname'][$matchParse['host']][$id]);
+						}
+					}
+					
+					/* regex matching */
+					foreach ($this->handlersURI['regex'] as $id => $handler) {
+						if (preg_match($handler['regex'], $match[0], $matches)) {
+							$handler['function'](new Event($data, $socket, $this, Array('rmFirstWord' => 1, 'uri' => $match[0], 'matches' => $matches)));
+							
+							if (isset($handler['runOnce']) && $handler['runOnce'])
+								unset($this->handlersURI['regex'][$id]);
+						}
+					}
+				}
+				
+				/* registered command handling */
 				$bits = explode(" ", $parse['params']['text']);
 				
 				if (isset($this->handlersCommand[strtolower($bits[0])])) {
