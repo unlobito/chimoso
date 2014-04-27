@@ -179,6 +179,25 @@ class Core {
 				$parser = new \Phergie\Irc\Parser();
 				$parse = $parser->parse($data);
 				
+				/* registered command handling */
+				$handledCommand = false;
+				$bits = explode(" ", $parse['params']['text']);
+				
+				if (isset($this->handlersCommand[strtolower($bits[0])])) {
+					foreach ($this->handlersCommand[strtolower($bits[0])] as $id => $handler) {
+						$return = $handler['function'](new Event($data, $socket, $this, Array('rmFirstWord' => 1)));
+						
+						if (isset($handler['runOnce']) && $handler['runOnce'])
+							unset($this->handlersCommand[$bits[0]][$id]);
+						
+						if ($return !== false)
+							$handledCommand = true;
+					}
+				}
+				
+				if ($handledCommand)
+					continue;
+				
 				/* URI handling */
 				preg_match_all('#\b(\w+):\/?\/?([^\s()<>]+)(?:\([\w\d]+\)|([^[:punct:]\s]|/))#', $parse['params']['text'], $URImatches, PREG_SET_ORDER);
 				
@@ -213,18 +232,6 @@ class Core {
 							if (isset($handler['runOnce']) && $handler['runOnce'])
 								unset($this->handlersURI['regex'][$id]);
 						}
-					}
-				}
-				
-				/* registered command handling */
-				$bits = explode(" ", $parse['params']['text']);
-				
-				if (isset($this->handlersCommand[strtolower($bits[0])])) {
-					foreach ($this->handlersCommand[strtolower($bits[0])] as $id => $handler) {
-						$handler['function'](new Event($data, $socket, $this, Array('rmFirstWord' => 1)));
-						
-						if (isset($handler['runOnce']) && $handler['runOnce'])
-							unset($this->handlersCommand[$bits[0]][$id]);
 					}
 				}
 			}
