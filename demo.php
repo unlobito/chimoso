@@ -15,56 +15,56 @@ require_once 'vendor/autoload.php';
 use henriwatson\Chimoso as Chimoso;
 
 /* Server connection */
-$chimoso = new Chimoso\Core("irc", 6667);
+$chimoso = new Chimoso\Core('irc', 6667);
 
 $chimoso->debug(true); // Output outgoing/incoming messages.
 
 try {
-	$chimoso->connect();
+    $chimoso->connect();
 } catch (Exception $e) {
-	die($e->getMessage());
+    die($e->getMessage());
 }
 
 /* Identify to the server */
-$chimoso->ident("Chimoso", "Chimoso", "Chimoso");
+$chimoso->ident('Chimoso', 'Chimoso', 'Chimoso');
 
 /* 376: MOTD done
  * runOnce: Drop handler after it's run
  */
-$chimoso->registerMessage("376", function($event) use ($chimoso) {
-	$chimoso->join("#test");
+$chimoso->registerMessage('376', function ($event) use ($chimoso) {
+    $chimoso->join('#test');
 }, Array('runOnce' => 1));
 
 /* Listen for messages beginning with !echo
  * Reply with anything sent with the message
  */
-$chimoso->registerCommand("!echo", function($event) {
-	$event->reply($event->body);
+$chimoso->registerCommand('!echo', function ($event) {
+    $event->reply($event->body);
 });
 
 /* Listen for URIs with a chimoso scheme
  * and echo the URI and the host component
  * Example: chimoso://test
  */
-$chimoso->registerURI("scheme", "chimoso", function($event) {
-	$event->reply("scheme: ".$event->additional['uri'].": ".$event->additional['components']['host']);
+$chimoso->registerURI('scheme', 'chimoso', function ($event) {
+    $event->reply('scheme: '.$event->additional['uri'].': '.$event->additional['components']['host']);
 });
 
 /* Listen for URIs with a chimoso hostname
  * and echo the URI
  * Example: http://chimoso/blah
  */
-$chimoso->registerURI("hostname", "chimoso", function($event) {
-	$event->reply("hostname: ".$event->additional['uri']);
+$chimoso->registerURI('hostname', 'chimoso', function ($event) {
+    $event->reply('hostname: '.$event->additional['uri']);
 });
 
 /* Listen for URIs that look like a tweet
  * and echo the URI
  * Example: https://twitter.com/moonpolysoft/status/456079501315674112
  */
-$chimoso->registerURI("regex", "/^http(s)?:\/\/twitter\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)$/", function($event) {
-	$event->reply("tweet:". $event->additional['uri']);
+$chimoso->registerURI('regex', '/^http(s)?:\/\/twitter\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)$/', function ($event) {
+    $event->reply('tweet:'. $event->additional['uri']);
 });
 
 /* Start listening for messages */
-$chimoso->run(); 
+$chimoso->run();
