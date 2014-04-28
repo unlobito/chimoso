@@ -1,18 +1,22 @@
 {
-    "hash": "96af1a6779290301d083b8319f76bfcb",
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
+    ],
+    "hash": "ba7ab28abb106537580dca8aec5cbd6a",
     "packages": [
         {
             "name": "phergie/phergie-irc-parser",
-            "version": "1.1.0",
+            "version": "1.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phergie/phergie-irc-parser.git",
-                "reference": "1.1.0"
+                "reference": "62b0ff3e831738111b949f725da9c4189aa19806"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phergie/phergie-irc-parser/zipball/1.1.0",
-                "reference": "1.1.0",
+                "url": "https://api.github.com/repos/phergie/phergie-irc-parser/zipball/62b0ff3e831738111b949f725da9c4189aa19806",
+                "reference": "62b0ff3e831738111b949f725da9c4189aa19806",
                 "shasum": ""
             },
             "require": {
@@ -33,7 +37,7 @@
                 "irc",
                 "parser"
             ],
-            "time": "2013-03-05 02:27:51"
+            "time": "2013-11-05 08:43:13"
         }
     ],
     "packages-dev": [
