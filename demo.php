@@ -66,5 +66,13 @@ $chimoso->registerURI('regex', '/^http(s)?:\/\/twitter\.com\/(?:#!\/)?(\w+)\/sta
     $event->reply('tweet:'. $event->additional['uri']);
 });
 
+/* Listen for URIs that don't match
+ * any of the above listeners
+ * Example: http://www.zombo.com/
+ */
+$chimoso->registerURIFallback(function ($event) {
+    $event->reply('fallback:'. $event->additional['uri']);
+});
+
 /* Start listening for messages */
 $chimoso->run();

@@ -79,8 +79,8 @@ class Core
     {
         $this->socket = fsockopen($this->server, $this->port, $error, $errorstr, $this->timeout);
         if (!$this->socket) {
-            throw new Exception('Unable to connect to server. '.$errorstr);
-        	return false;
+            throw new \Exception('Unable to connect to server. '.$errorstr);
+            return false;
         }
     }
 
@@ -149,6 +149,16 @@ class Core
             return false;
         }
     }
+    
+    /** Register handler to fire if no URI handler succeeds
+     * @param closure callback function. an Event object will be passed back as the only parameter.
+    */
+    public function registerURIFallback($function)
+    {
+       $this->handlersURI['fallback'][] = Array(
+            'function' => &$function
+        );
+    }
 
     /** Start listening for messages */
     public function run()
@@ -201,14 +211,14 @@ class Core
                 if (isset($this->handlersCommand[strtolower($bits[0])])) {
                     foreach ($this->handlersCommand[strtolower($bits[0])] as $id => $handler) {
                         $return = $handler['function'](
-                        	new Event(
-                        		$data,
-                        		$socket,
-                        		$this,
-                        		Array(
-                        			'rmFirstWord' => 1
-                        		)
-                        	)
+                            new Event(
+                                $data,
+                                $socket,
+                                $this,
+                                Array(
+                                    'rmFirstWord' => 1
+                                )
+                            )
                         );
 
                         if (isset($handler['runOnce']) && $handler['runOnce']) {
@@ -229,26 +239,31 @@ class Core
                 preg_match_all('#\b(\w+):\/?\/?([^\s()<>]+)(?:\([\w\d]+\)|([^[:punct:]\s]|/))#', $parse['params']['text'], $URImatches, PREG_SET_ORDER);
 
                 foreach ($URImatches as $match) {
+                    $handledURI = false;
                     $matchParse = parse_url($match[0]); // URI parsing is hard. Let PHP do it.
 
                     /* protocol matching */
                     if (isset($this->handlersURI['scheme'][$matchParse['scheme']])) {
                         foreach ($this->handlersURI['scheme'][$matchParse['scheme']] as $id => $handler) {
-                            $handler['function'](
-                            	new Event(
-                            		$data,
-                            		$socket,
-                            		$this,
-                            		Array(
-                            			'rmFirstWord' => 1,
-                            			'uri' => $match[0],
-                            			'components' => $matchParse
-                            		)
-                            	)
+                            $return = $handler['function'](
+                                new Event(
+                                    $data,
+                                    $socket,
+                                    $this,
+                                    Array(
+                                        'rmFirstWord' => 1,
+                                        'uri' => $match[0],
+                                        'components' => $matchParse
+                                    )
+                                )
                             );
 
                             if (isset($handler['runOnce']) && $handler['runOnce']) {
                                 unset($this->handlersURI['scheme'][$matchParse['scheme']][$id]);
+                            }
+                            
+                            if ($return !== false) {
+                                $handledURI = true;
                             }
                         }
                     }
@@ -256,7 +271,7 @@ class Core
                     /* hostname matching */
                     if (isset($this->handlersURI['hostname'][$matchParse['host']])) {
                         foreach ($this->handlersURI['hostname'][$matchParse['host']] as $id => $handler) {
-                            $handler['function'](
+                            $return = $handler['function'](
                                 new Event(
                                     $data,
                                     $socket,
@@ -272,13 +287,17 @@ class Core
                             if (isset($handler['runOnce']) && $handler['runOnce']) {
                                 unset($this->handlersURI['hostname'][$matchParse['host']][$id]);
                             }
+                            
+                            if ($return !== false) {
+                                $handledURI = true;
+                            }
                         }
                     }
 
                     /* regex matching */
                     foreach ($this->handlersURI['regex'] as $id => $handler) {
                         if (preg_match($handler['regex'], $match[0], $matches)) {
-                            $handler['function'](
+                            $return = $handler['function'](
                                 new Event(
                                     $data,
                                     $socket,
@@ -294,6 +313,27 @@ class Core
                             if (isset($handler['runOnce']) && $handler['runOnce']) {
                                 unset($this->handlersURI['regex'][$id]);
                             }
+                            
+                            if ($return !== false) {
+                                $handledURI = true;
+                            }
+                        }
+                    }
+                    
+                    if ($handledURI === false) {
+                        foreach ($this->handlersURI['fallback'] as $id => $handler) {
+                            $handler['function'](
+                                new Event(
+                                    $data,
+                                    $socket,
+                                    $this,
+                                    Array(
+                                        'rmFirstWord' => 1,
+                                        'uri' => $match[0],
+                                        'components' => $matchParse
+                                    )
+                                )
+                            );
                         }
                     }
                 }
