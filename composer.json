@@ -2,7 +2,8 @@
 	"name": "henriwatson/chimoso",
 	"require": {
 		"php": ">= 5.3",
-		"phergie/phergie-irc-parser": "1.4.0"
+		"phergie/phergie-irc-parser": "1.4.0",
+		"react/react": "0.4.*"
 	},
 	"description": "PHP IRC bot framework",
 	"homepage": "https://github.com/henriwatson/chimoso",
